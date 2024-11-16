@@ -15,28 +15,28 @@ struct dates{
     unsigned int year;
 };
 
-struct individual{
+typedef struct individuals{
     int user_ID;//ranges from 1 to 1000
     char user_name[100];
     float income;
-};
+}individuals;
 
-struct expense{
+typedef struct expense{
     int expense_ID;
     int user_ID;
     char expense_category[MAX_EXPENSE_CATEGORY_SIZE]; // rent, utility, grocery, stationary, leisure;
     float expense_amount;
     struct dates date_of_expense;
-};
+}expense;
 
-struct family{
+typedef struct family{
     int family_ID;
     char family_name[100];
     int total_members;
     int family_members_user_id[4];
     float total_family_income;
     float total_family_expense;
-};
+}family;
 
 struct daily_expense{
     struct dates date;
@@ -53,7 +53,7 @@ struct family_expense_cat_name{
     float expense;
 };
 
-int AddUser(struct individual users[], int users_count, int user_id, float income, char name[],int size) {
+int AddUser(individuals users[], int users_count, int user_id, float income, char name[],int size) {
     int status_code;
     if (users_count >= size || users_count < 0) {
         printf("User list is out of bounds.\n");
@@ -80,15 +80,15 @@ int AddUser(struct individual users[], int users_count, int user_id, float incom
 
     return status_code;
 }
-void swap_user(struct individual user[], int start, int pivot){
+void swap_user(individuals user[], int start, int pivot){
     if(start != pivot){
-        struct individual temp = user[start];
+        individuals temp = user[start];
         user[start] = user[pivot];
         user[pivot] = temp;
     }
 }
 
-int partition_array_of_user(struct individual user[], int start, int end){
+int partition_array_of_user(individuals user[], int start, int end){
     int x = user[start].user_ID;
     int i = start + 1;
     int j = end;
@@ -107,7 +107,7 @@ int partition_array_of_user(struct individual user[], int start, int end){
     return j;
 }
 
-void sort_users_using_user_id(struct individual user[], int start, int end){
+void sort_users_using_user_id(individuals user[], int start, int end){
     if(start < end){
         int pivot = partition_array_of_user(user, start, end);
         sort_users_using_user_id(user, start, pivot-1);
@@ -115,7 +115,7 @@ void sort_users_using_user_id(struct individual user[], int start, int end){
     }
 }
 
-int AddExpense(struct expense expenses[], int expense_count, struct individual users[], int size, int expense_id, int user_id, float expense_amount, char expenses_category[], struct dates date){
+int AddExpense(expense expenses[], int expense_count, individuals users[], int size, int expense_id, int user_id, float expense_amount, char expenses_category[], struct dates date){
     int status_code = SUCCESS;
     if(expense_count >= MAX_EXPENSES){
         status_code = FAILURE;
@@ -157,13 +157,13 @@ int AddExpense(struct expense expenses[], int expense_count, struct individual u
     return status_code;
 }
 
-void swap_expenses(struct expense expenses[], int i, int j){
-    struct expense temp_expense = expenses[i];
+void swap_expenses(expense expenses[], int i, int j){
+    expense temp_expense = expenses[i];
     expenses[i] = expenses[j];
     expenses[j] = temp_expense;
 }
 
-int partition_array_of_expenses(struct expense expenses[], int start, int end){
+int partition_array_of_expenses(expense expenses[], int start, int end){
     int x = expenses[start].user_ID;
     int i = start + 1;
     int j = end;
@@ -182,7 +182,7 @@ int partition_array_of_expenses(struct expense expenses[], int start, int end){
     return j;
 }
 
-void sort_expenses_by_user_id(struct expense expenses[], int start, int end){
+void sort_expenses_by_user_id(expense expenses[], int start, int end){
     if(start < end){
         int pivot = partition_array_of_expenses(expenses, start, end);
         sort_expenses_by_user_id(expenses, start, pivot-1);
@@ -190,9 +190,9 @@ void sort_expenses_by_user_id(struct expense expenses[], int start, int end){
     }
 }
 
-void sort_expenses_id_of_expenses(struct expense expenses[], int start, int end){
+void sort_expenses_id_of_expenses(expense expenses[], int start, int end){
     for(int i = start+1; i <= end; i++){
-        struct expense x = expenses[i];
+        expense x = expenses[i];
         int j = i-1;
         while(j >= start && expenses[j].expense_ID > x.expense_ID){
             expenses[j+1] = expenses[j];
@@ -202,7 +202,7 @@ void sort_expenses_id_of_expenses(struct expense expenses[], int start, int end)
     }
 }
 
-void sort_expenses(struct expense expenses[], int size){
+void sort_expenses(expense expenses[], int size){
     sort_expenses_by_user_id(expenses, 0, size-1);
     int i = 0;
     while(i < size){
@@ -216,7 +216,7 @@ void sort_expenses(struct expense expenses[], int size){
     }
 }
 
-int CreateFamily(struct individual user[], int user_count, struct family families[], int size, char family_name[], int family_id, int family_user_id[], int total_members) {
+int CreateFamily(individuals user[], int user_count, family families[], int size, char family_name[], int family_id, int family_user_id[], int total_members) {
     int status_code = SUCCESS;
     if (size > MAX_NO_OF_FAMALIES) {  
         printf("Out of limit\n");
@@ -261,7 +261,7 @@ int CreateFamily(struct individual user[], int user_count, struct family familie
     return status_code;
 }
 
-float calculate_monthly_expense_of_family(struct family fam, int total_members, struct expense expenses[], int expense_count){
+float calculate_monthly_expense_of_family(family fam, int total_members, expense expenses[], int expense_count){
     float sum = 0;
     for(int i = 0; i < total_members; i++){
         for(int j = 0; j < expense_count; j++){
@@ -273,7 +273,7 @@ float calculate_monthly_expense_of_family(struct family fam, int total_members, 
     return sum;
 }
 
-float calculate_monthly_income_of_family(struct family fam, int total_members, struct individual user[], int current_user){
+float calculate_monthly_income_of_family(family fam, int total_members, individuals user[], int current_user){
     float sum = 0;
     for(int i = 0; i < total_members; i++){
         for(int j = 0; j < current_user; j++){
@@ -285,7 +285,7 @@ float calculate_monthly_income_of_family(struct family fam, int total_members, s
     return sum;
 }
 
-int update_individual_details(struct individual user[], int *current_users, struct family families[], int current_family_count, int user_id, float income, char name[]){
+int update_individual_details(individuals user[], int *current_users, family families[], int current_family_count, int user_id, float income, char name[]){
     int found = -1;
     int status_code = SUCCESS;
     int i = 0;
@@ -324,7 +324,7 @@ int update_individual_details(struct individual user[], int *current_users, stru
     return status_code;
 }
 
-int delete_individual_details(struct individual user[], int *current_users, struct family families[], int *current_family_count, struct expense expenses[], int *current_expenses, int user_id){
+int delete_individual_details(individuals user[], int *current_users, family families[], int *current_family_count, expense expenses[], int *current_expenses, int user_id){
     int found = -1;
     int status_code = SUCCESS;
     int i = 0;
@@ -425,7 +425,7 @@ int delete_individual_details(struct individual user[], int *current_users, stru
     return status_code;
 }
 
-int update_family_details(struct family families[], int *current_family_count, int family_id, char family_name[], int user_id_arr[], int total_users){
+int update_family_details(family families[], int *current_family_count, int family_id, char family_name[], int user_id_arr[], int total_users){
     int found = -1;
     int status_code = SUCCESS;
     for(int i = 0; i < *current_family_count && found == -1; i++){
@@ -461,7 +461,7 @@ int update_family_details(struct family families[], int *current_family_count, i
     return status_code;
 }
 
-int delete_family(struct family families[], int *current_family_count, struct individual user[], int *current_users, struct expense expenses[], int *current_expense, int fam_id){
+int delete_family(family families[], int *current_family_count, individuals user[], int *current_users, expense expenses[], int *current_expense, int fam_id){
     int found = -1;
     int status_code = SUCCESS;
     for(int i = 0; i < *current_family_count; i++){
@@ -527,7 +527,7 @@ int delete_family(struct family families[], int *current_family_count, struct in
     return status_code;
 }
 
-int update_expense_details(struct expense expenses[], int *current_expenses, int user_id, int expense_id, float expense_amount, char name[], struct dates date){
+int update_expense_details(expense expenses[], int *current_expenses, int user_id, int expense_id, float expense_amount, char name[], struct dates date){
     int status_code = SUCCESS;
     int found = -1;
     for(int i = 0; i < *current_expenses && found == -1; i++){
@@ -561,7 +561,7 @@ int update_expense_details(struct expense expenses[], int *current_expenses, int
     return status_code;
 }
 
-int delete_expense(struct expense expenses[], int *current_expenses, struct individual user[], int *current_users, struct family families[], int *current_family_count, int expense_id){
+int delete_expense(expense expenses[], int *current_expenses, individuals user[], int *current_users, family families[], int *current_family_count, int expense_id){
     int found = -1;
     int status_code = SUCCESS;
     for(int i = 0; i < *current_expenses && found == -1; i++) {
@@ -604,7 +604,7 @@ int delete_expense(struct expense expenses[], int *current_expenses, struct indi
     return status_code;
 }
 
-float get_total_expense(struct family fam){
+float get_total_expense(family fam){
     float monthly_expense = fam.total_family_expense;
     if(monthly_expense > fam.total_family_income){
         printf("you have surpassed you expense limit by %f\n", monthly_expense - fam.total_family_income);
@@ -612,7 +612,7 @@ float get_total_expense(struct family fam){
     return monthly_expense;
 }
 
-struct daily_expense max_expense_day_of_family(struct family fam, int total_members, struct expense expenses[], int current_expense){//family maxexpense day
+struct daily_expense max_expense_day_of_family(family fam, int total_members, expense expenses[], int current_expense){//family maxexpense day
     struct daily_expense expense_dates[MAX_EXPENSES];
     for(int i = 0; i < MAX_EXPENSES; i++){
         expense_dates[i].date.date = 0;
@@ -657,7 +657,7 @@ struct daily_expense max_expense_day_of_family(struct family fam, int total_memb
     return max_expense_date;
 }
 
-float get_individual_expense(struct individual person, struct expense expenses[], int current_expense, struct category_expense category_wise[]){
+float get_individual_expense(individuals person, expense expenses[], int current_expense, struct category_expense category_wise[]){
     float sum = 0;
     for(int i = 0; i < current_expense; i++){
         if(person.user_ID == expenses[i].user_ID){
@@ -694,7 +694,7 @@ void sort_category_wise(struct category_expense category_wise[], int start, int 
     }
 }
 
-float get_categorical_expense(char category_name[], struct family fam, int current_family_count, struct expense expenses[], int current_expense, struct family_expense_cat_name fecn[]){
+float get_categorical_expense(char category_name[], family fam, int current_family_count, expense expenses[], int current_expense, struct family_expense_cat_name fecn[]){
     float total_expense = 0;
     int size = fam.total_members;
     int fecn_index = 0;
@@ -737,7 +737,7 @@ void sort_fecn(struct family_expense_cat_name fecn[], int start, int end){
     }
 }   
 
-void initialize_user(struct individual user[], int size){
+void initialize_user(individuals user[], int size){
     for(int i = 0; i < size; i++){
         user[i].income = -1;
         user[i].user_ID = -1;
@@ -745,7 +745,7 @@ void initialize_user(struct individual user[], int size){
     }
 }
 
-void initialize_family(struct family families[], int size) {
+void initialize_family(family families[], int size) {
     for (int i = 0; i < size; i++) {
         families[i].family_ID = -1;
         families[i].family_name[0] = '\0';
@@ -758,7 +758,7 @@ void initialize_family(struct family families[], int size) {
     }
 }
 
-void initialize_expenses(struct expense expenses[], int size){
+void initialize_expenses(expense expenses[], int size){
     for(int i = 0; i < size; i++){
         expenses[i].user_ID = -1;
         expenses[i].expense_ID = -1;
@@ -770,7 +770,7 @@ void initialize_expenses(struct expense expenses[], int size){
     }
 }
 
-void read_user(int *current_users, struct individual user[], int input_users){
+void read_user(int *current_users, individuals user[], int input_users){
     FILE *fp = fopen("file1.txt", "r");
     if (fp == NULL) {
         printf("Cannot open file1.txt, the program will be stopped now\n");
@@ -797,7 +797,7 @@ void read_user(int *current_users, struct individual user[], int input_users){
     printf("Data read from file.txt\n");
 }
 
-void read_expenses(int *current_expenses, struct expense expenses[], int input_expenses){
+void read_expenses(int *current_expenses, expense expenses[], int input_expenses){
     FILE *fp2 = fopen("file2.txt", "r");
     if (fp2 == NULL) {
         printf("Cannot open file2.txt, the program will be stopped now\n");
@@ -828,7 +828,7 @@ void read_expenses(int *current_expenses, struct expense expenses[], int input_e
     printf("Data read from file2.txt\n");
 }
 
-void read_families(int *current_family_count, struct family families[], int total_families){
+void read_families(int *current_family_count, family families[], int total_families){
     FILE *fp3 = fopen("file3.txt", "r");
     if (fp3 == NULL) {
         printf("Cannot open file3.txt, the program will be stopped now\n");
@@ -877,9 +877,9 @@ int main(){
         scanf("%d", &total_families);
     }while(total_families < 10);
 
-    struct individual user[MAX_USERS];
-    struct expense expenses[MAX_EXPENSES];
-    struct family families[MAX_NO_OF_FAMALIES];
+    individuals user[MAX_USERS];
+    expense expenses[MAX_EXPENSES];
+    family families[MAX_NO_OF_FAMALIES];
 
     initialize_user(user, MAX_USERS);
     initialize_expenses(expenses, MAX_EXPENSES);
@@ -1295,7 +1295,7 @@ int main(){
             }
             case 6:
             {
-                struct family fam;
+                family fam;
                 int fam_id;
                 printf("enter family id : ");
                 scanf("%d", &fam_id);
@@ -1324,7 +1324,7 @@ int main(){
                     printf("Enter expense category again : ");
                     scanf("%s", &cat_name);         
                 }
-                struct family fam;
+                family fam;
                 int fam_id;
                 printf("enter family id : ");
                 scanf("%d", &fam_id);
@@ -1337,7 +1337,8 @@ int main(){
                 }
                 if(found == 1){
                     int s = fam.total_members;
-                    struct family_expense_cat_name fecn[s];
+                    struct family_expense_cat_name
+                 fecn[s];
                     for(int i = 0; i < s; i++){
                         fecn[i].expense = 0;
                         fecn[i].user_id = 0;
@@ -1358,7 +1359,7 @@ int main(){
                 int family_id;
                 printf("enter family_id you need to check max expenses : ");
                 scanf("%d", &family_id);
-                struct family fam;
+                family fam;
                 int found = 0;
                 for(int i = 0; i < current_family_count && found == 0; i++){
                     if(families[i].family_ID == family_id){
@@ -1390,7 +1391,7 @@ int main(){
                 int user_id;
                 printf("enter user id of which users monthly expenses you want to know :  ");
                 scanf("%d", &user_id);
-                struct individual person;
+                individuals person;
                 int found = 0;
                 for(int i = 0; i < current_users && found == 0; i++){
                     if(user[i].user_ID == user_id){
