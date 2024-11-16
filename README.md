@@ -7,23 +7,23 @@ probelm statement :
 You are tasked with implementing an Expense tracking application to track family expenses. The application should allow users to add monthly expenses for different categories such as rent, utilities, groceries, etc. The goal is to track total as well as category-wise expense of the whole family. You need to implement this application using an array or multiple arrays of structures.
 
 Individual structure must contain the following fields:
-User ID 
-User name
-Income
+User ID ,
+User name,
+Income.
 
 Family Structure : 
-Family ID
-Family name
-Array of individual IDs belonging to the family (reference to User ID)
-Total family income calculated as the sum of individual incomes
-Total Monthly family expense calculated as sum of all expenses by family members
+Family ID,
+Family name,
+Array of individual IDs belonging to the family (reference to User ID),
+Total family income calculated as the sum of individual incomes,
+Total Monthly family expense calculated as sum of all expenses by family members.
 
 Expense Structure : 
-Expense ID
-User ID (Reference to User ID)
-Expense Category: Rent, Utility, Grocery, Stationary, Leisure
-Expense Amount
-Date of expense
+Expense ID,
+User ID (Reference to User ID),
+Expense Category: Rent, Utility, Grocery, Stationary, Leisure,
+Expense Amount,
+Date of expense.
 
 Implement the following functions to create an expense tracking application:
 
